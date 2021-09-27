@@ -27,6 +27,7 @@ class Atendimento {
     ];
 
     const erros = validacoes.filter((item) => !item.valido);
+
     const existemErros = erros.length;
 
     if (existemErros) {
@@ -38,10 +39,64 @@ class Atendimento {
         if (erro) {
           resp.status(400).json(erro);
         } else {
-          resp.status(201).json(resultados);
+          resp.status(201).json(atendimento);
         }
       });
     }
+  }
+
+  lista(resp) {
+    const sql = "SELECT * FROM Atendimentos";
+
+    conexao.query(sql, (erro, resultado) => {
+      if (erro) {
+        resp.status(400).json(erro);
+      } else {
+        resp.status(200).json(resultado);
+      }
+    });
+  }
+
+  buscaPorId(id, resp) {
+    const sql = `SELECT * FROM Atendimentos WHERE id =${id}`;
+
+    conexao.query(sql, (erro, resultado) => {
+      if (erro) {
+        resp.status(400).json(erro);
+      } else {
+        const atendimento = resultado[0];
+        resp.status(200).json(atendimento);
+      }
+    });
+  }
+
+  altera(id, valores, resp) {
+    if (valores.data) {
+      valores.data = moment(valores.data, "DD/MM/YYYY").format(
+        "YYYY-MM-DD HH:MM:SS"
+      );
+    }
+    const sql = "UPDATE Atendimentos SET ? WHERE id = ?";
+
+    conexao.query(sql, [valores, id], (erro, resultado) => {
+      if (erro) {
+        resp.status(400).json(erro);
+      } else {
+        resp.status(200).json({ ...valores, id });
+      }
+    });
+  }
+
+  deleta(id, resp) {
+    const sql = "DELETE FROM Atendimentos WHERE id = ?";
+
+    conexao.query(sql, id, (erro, resultado) => {
+      if (erro) {
+        resp.status(400).json(erro);
+      } else {
+        resp.status(200).json({ id });
+      }
+    });
   }
 }
 

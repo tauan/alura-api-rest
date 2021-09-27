@@ -7,6 +7,28 @@ module.exports = (app) => {
     const atendimento = req.body;
 
     Atendimentos.adiciona(atendimento, resp);
-    //resp.send("Você esta na rota de atendimento realizando um POST");
+  });
+
+  app.get("/atendimentos", (req, resp) => {
+    Atendimentos.lista(resp);
+  });
+
+  app.get("/atendimento/:id", (req, resp) => {
+    const id = parseInt(req.params.id);
+
+    Atendimentos.buscaPorId(id, resp);
+  });
+
+  app.patch("/atendimento/:id", (req, resp) => {
+    const id = parseInt(req.params.id);
+    const valores = req.body;
+
+    Atendimentos.altera(id, valores, resp);
+  });
+
+  app.delete("/atendimento/:id", (req, resp) => {
+    const id = parseInt(req.params.id);
+
+    Atendimentos.deleta(id, resp);
   });
 };
